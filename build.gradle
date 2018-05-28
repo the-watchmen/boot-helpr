@@ -1,0 +1,98 @@
+buildscript {
+  // https://stackoverflow.com/a/49480302/2371903
+  ext {
+    bootVersion = '2.0.1.RELEASE'
+  }
+}
+
+// https://central.sonatype.org/pages/gradle.html
+//
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'signing'
+//
+// maven-publish jar is supposedly the future, but doesn't currently handle signing, so avoiding for now
+//
+// apply plugin: 'maven-publish'
+
+group 'com.github.the-watchmen'
+version '1.0.0'
+
+bootVersion = '2.0.1.RELEASE'
+
+sourceCompatibility = 1.8
+
+repositories {
+  mavenLocal()
+  mavenCentral()
+}
+
+dependencies {
+  compile "org.springframework.boot:spring-boot-loader:${bootVersion}"
+  testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+task javadocJar(type: Jar) {
+  classifier = 'javadoc'
+  from javadoc
+}
+
+task sourcesJar(type: Jar) {
+  classifier = 'sources'
+  from sourceSets.main.allSource
+}
+
+artifacts {
+  archives javadocJar, sourcesJar
+}
+
+signing {
+  sign configurations.archives
+}
+
+uploadArchives {
+  repositories {
+    mavenDeployer {
+      beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+      repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2/') {
+        authentication(userName: ossrhUser, password: ossrhPassword)
+      }
+
+      snapshotRepository(url: 'https://oss.sonatype.org/content/repositories/snapshots/') {
+        authentication(userName: ossrhUser, password: ossrhPassword)
+      }
+
+      pom.project {
+        name 'boot helpr'
+        packaging 'jar'
+        // optionally artifactId can be defined here
+        description 'misc helpers for spring-boot'
+        url 'https://github.com/the-watchmen/boot-helpr'
+
+        licenses {
+          license {
+            name 'The Apache License, Version 2.0'
+            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+          }
+        }
+
+        developers {
+          developer {
+            id 'tony-kerz'
+            name 'tony kerz'
+            email 'anthony.kerz@gmail.com'
+          }
+        }
+
+        scm {
+          connection 'scm:git:https://github.com/the-watchmen/boot-helpr.git'
+          developerConnection 'scm:git:git@github.com:the-watchmen/boot-helpr.git'
+          url 'https://github.com/the-watchmen/boot-helpr.git'
+        }
+      }
+    }
+  }
+}
+
+
