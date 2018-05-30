@@ -1,7 +1,7 @@
 buildscript {
   // https://stackoverflow.com/a/49480302/2371903
   ext {
-    bootVersion = '2.0.1.RELEASE'
+    bootVersion = '2.0.2.RELEASE'
   }
 }
 
@@ -16,9 +16,7 @@ apply plugin: 'signing'
 // apply plugin: 'maven-publish'
 
 group 'com.github.the-watchmen'
-version '1.0.0'
-
-bootVersion = '2.0.1.RELEASE'
+version '1.1.0'
 
 sourceCompatibility = 1.8
 

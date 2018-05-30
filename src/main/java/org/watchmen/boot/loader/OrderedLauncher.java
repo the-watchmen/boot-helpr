@@ -1,19 +1,18 @@
 package org.watchmen.boot.loader;
 
-import org.springframework.boot.loader.JarLauncher;
+import org.springframework.boot.loader.PropertiesLauncher;
 import org.springframework.boot.loader.archive.Archive;
 
-import java.net.MalformedURLException;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
 
-public class OrderedJarLauncher extends JarLauncher {
+public class OrderedLauncher extends PropertiesLauncher {
     private static String[] _args;
 
     @Override
-    protected void postProcessClassPathArchives(List<Archive> archives) throws MalformedURLException {
-        log("processing classpath");
+    protected List<Archive> getClassPathArchives() throws Exception {
+        List<Archive> archives = super.getClassPathArchives();
         for (int i = 0; i < archives.size(); i++) {
             Archive archive = archives.get(i);
             String[] path = archive.getUrl().getPath().split("/");
@@ -21,7 +20,7 @@ public class OrderedJarLauncher extends JarLauncher {
             int idx = jarPath.lastIndexOf(".jar!");
             if (idx >= 0) {
                 String jar = jarPath.substring(0, idx);
-                // log("jar={0}", jar);
+                log("jar={0}", jar);
                 for (int j = 0; j < _args.length; j++) {
                     String test = _args[j];
                     if (jar.startsWith(test)) {
@@ -34,15 +33,16 @@ public class OrderedJarLauncher extends JarLauncher {
 
             }
         }
+        return archives;
     }
 
     public static void main(String[] args) throws Exception {
         log("args={0}", Arrays.toString(args));
         _args = args;
-        new OrderedJarLauncher().launch(args);
+        new OrderedLauncher().launch(args);
     }
 
     static void log(String s, Object... args) {
-        System.out.println(MessageFormat.format("OrderedJarLauncher: " + s, args));
+        System.out.println(MessageFormat.format("org.watchmen.boot.loader.OrderedLauncher: " + s, args));
     }
 }
