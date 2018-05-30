@@ -20,7 +20,7 @@ public class OrderedLauncher extends PropertiesLauncher {
             int idx = jarPath.lastIndexOf(".jar!");
             if (idx >= 0) {
                 String jar = jarPath.substring(0, idx);
-                log("jar={0}", jar);
+                // log("jar={0}", jar);
                 for (int j = 0; j < _args.length; j++) {
                     String test = _args[j];
                     if (jar.startsWith(test)) {
